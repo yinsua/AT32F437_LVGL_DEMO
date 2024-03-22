@@ -33,9 +33,6 @@
 #include "lv_port_indev_template.h"
 #include "lvgl.h"
 
-
-#define    EXTEND_SRAM          0x00
-
 void crm_configuration(void);
 void nvic_configuration(void);
 void lv_demo_benchmark(void);
@@ -58,23 +55,6 @@ void lcd_display_initial_info(void)
   lcd_show_num(120, 300, 0, 3, 16);
 }
 
-void extend_sram(void)
-{
-  /* check if ram has been set to expectant size, if not, change eopb0 to 64k sram */
-  if(((USD->eopb0) & 0xFF) != EXTEND_SRAM)
-  {
-    flash_unlock();
-    /* erase user system data bytes */
-    flash_user_system_data_erase();
-
-    /* change sram size */
-    flash_user_system_data_program((uint32_t)&USD->eopb0, EXTEND_SRAM);
-
-    /* system reset */
-    nvic_system_reset();
-  }
-}
-
 
 /**
   * @brief  main function.
@@ -94,24 +74,28 @@ int main(void)
   /* for littlevgl gui tick increase */  
   tmr7_int_init(191, 999);
  
-  //crm_configuration();
+  crm_configuration();
   lcd_init();
-  lcd_clear(RED);
+  //lcd_clear(RED);
 
 #if 1
   /* for benchmark test */
-   lv_init();
+  lv_init();
+	printf("lv_init finished\r\n");
   lv_port_disp_init();
+	printf("lv_port_disp_init finished\r\n");
   lv_demo_benchmark();
+	printf("lv_demo_benchmark finished\r\n");
 #else  
   /* for touch test */
-  touch_adjust();
+  //touch_adjust();
   lcd_display_initial_info();
   lv_init();
   lv_port_disp_init();
   lv_port_indev_init();
   lv_example_style_10(); 
 #endif  
+	printf("init finished\r\n");
   while(1)
   {
     lv_task_handler();   

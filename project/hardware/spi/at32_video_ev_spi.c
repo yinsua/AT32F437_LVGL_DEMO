@@ -71,6 +71,9 @@ void lcd_hw_init(void)
 
   /* configure spi_master pins: sck, mosi and miso */
   /* configure miso pin as alternate function push pull */
+	
+	gpio_pin_mux_config(LCD_SPI_SCK_PORT, LCD_SPI_SCK_SOURCE_PIN, LCD_SPI_SCK_MUX_NUM);
+	
   gpio_default_para_init(&gpio_init_struct);
   gpio_init_struct.gpio_pins = LCD_SPI_SCK_PIN;      //LCD_SPI_SCK
   gpio_init_struct.gpio_out_type = GPIO_OUTPUT_PUSH_PULL;
@@ -79,10 +82,13 @@ void lcd_hw_init(void)
   gpio_init_struct.gpio_drive_strength =  GPIO_DRIVE_STRENGTH_STRONGER;
   gpio_init(LCD_SPI_SCK_PORT, &gpio_init_struct);
 
+	gpio_pin_mux_config(LCD_SPI_MOSI_PORT, LCD_SPI_MOSI_SOURCE_PIN, LCD_SPI_MOSI_MUX_NUM);
+
   gpio_init_struct.gpio_pins = LCD_SPI_MOSI_PIN;     //LCD_SPI_MOSI
   gpio_init(LCD_SPI_MOSI_PORT, &gpio_init_struct);
 
   /* configureand mosi pins as alternate function push pull */
+	gpio_pin_mux_config(LCD_SPI_MISO_PORT, LCD_SPI_MISO_SOURCE_PIN, LCD_SPI_MISO_MUX_NUM);
   gpio_init_struct.gpio_pins = LCD_SPI_MISO_PIN;     //LCD_SPI_MISO
   gpio_init_struct.gpio_mode = GPIO_MODE_INPUT;
   gpio_init_struct.gpio_pull = GPIO_PULL_DOWN;
@@ -117,6 +123,21 @@ void lcd_hw_init(void)
   dma_init_struct.priority = DMA_PRIORITY_HIGH;
   dma_init_struct.loop_mode_enable = FALSE;
   dma_init(LCD_SPI_MASTER_Tx_DMA_Channel, &dma_init_struct);
+	
+	/* 开启传输完成中断 */ 
+	dma_interrupt_enable(LCD_SPI_MASTER_Tx_DMA_Channel, DMA_FDT_INT, TRUE);
+	
+	///
+	crm_periph_clock_enable(CRM_TMR2_PERIPH_CLOCK, TRUE);
+	tmr_base_init(TMR2, 0x3F, 0); 
+	tmr_cnt_dir_set(TMR2, TMR_COUNT_UP);
+	/* 开启 TMR2 溢出DMA 请求 */ 
+	tmr_dma_request_enable(TMR2, TMR_OVERFLOW_DMA_REQUEST, TRUE); 
+	
+	///
+	dmamux_enable(DMA1, TRUE);
+	dmamux_init(DMA1MUX_CHANNEL3, DMAMUX_DMAREQ_ID_TMR2_OVERFLOW);
+	tmr_counter_enable(TMR2, TRUE); 
 }
 
 /**

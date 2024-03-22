@@ -63,12 +63,18 @@
 #define LCD_CS2_GPIO_CLK			              CRM_GPIOA_PERIPH_CLOCK 
 
 #define LCD_SPI_SCK_PIN			               GPIO_PINS_5
+#define LCD_SPI_SCK_SOURCE_PIN							GPIO_PINS_SOURCE5
+#define LCD_SPI_SCK_MUX_NUM									GPIO_MUX_5
 #define LCD_SPI_SCK_PORT			              GPIOA
 #define LCD_SPI_SCK_GPIO_CLK			          CRM_GPIOA_PERIPH_CLOCK 
 #define LCD_SPI_MOSI_PIN			              GPIO_PINS_7 
+#define LCD_SPI_MOSI_SOURCE_PIN							GPIO_PINS_SOURCE7
+#define LCD_SPI_MOSI_MUX_NUM									GPIO_MUX_5
 #define LCD_SPI_MOSI_PORT			             GPIOA
 #define LCD_SPI_MOSI_GPIO_CLK			         CRM_GPIOA_PERIPH_CLOCK 
 #define LCD_SPI_MISO_PIN			              GPIO_PINS_6
+#define LCD_SPI_MISO_SOURCE_PIN							GPIO_PINS_SOURCE6
+#define LCD_SPI_MISO_MUX_NUM									GPIO_MUX_5
 #define LCD_SPI_MISO_PORT			             GPIOA
 #define LCD_SPI_MISO_GPIO_CLK			         CRM_GPIOA_PERIPH_CLOCK 
 
